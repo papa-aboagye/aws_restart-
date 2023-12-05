@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload and Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+ 
+    h1 {
+      text-align: center;
+    }
+ 
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+ 
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+ 
+    input[type="text"],
+    input[type="file"],
+    input[type="color"] {
+      width: calc(100% - 22px);
+      margin-bottom: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+ 
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+ 
+    #file-display {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+ 
+    #file-display img,
+    #file-display embed {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+    }
+ 
+    #custom-message {
+      width: 100%;
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+ 
+  <h1>Portfolio Viewer</h1>
+ 
+  <form id="upload-form" enctype="multipart/form-data">
+    <label for="title">Enter Title:</label>
+    <input type="text" id="title" name="title" placeholder="Title">
+ 
+    <label for="font-color">Choose Font Color:</label>
+    <input type="color" id="font-color" name="font-color">
+ 
+    <label for="custom-message">Custom Message:</label>
+    <textarea id="custom-message" name="custom-message" placeholder="Enter custom message here"></textarea>
+ 
+    <label for="image-file">Upload Image File:</label>
+    <input type="file" id="image-file" name="image-file" accept="image/*">
+ 
+    <label for="pdf-files">Upload PDF Files:</label>
+    <input type="file" id="pdf-files" name="pdf-files" accept=".pdf" multiple>
+ 
+    <label for="gradient-color">Choose Gradient Background Colors:</label>
+    <input type="color" id="start-color" name="start-color"> <!-- Start color -->
+    <input type="color" id="end-color" name="end-color"> <!-- End color -->
+ 
+    <button type="button" onclick="displayFiles()">Display Files</button>
+  </form>
+ 
+  <div id="file-display"></div>
+ 
+  <script>
+    function displayFiles() {
+      const title = document.getElementById('title').value;
+      const fontColor = document.getElementById('font-color').value;
+      const customMessage = document.getElementById('custom-message').value;
+      const startColor = document.getElementById('start-color').value;
+      const endColor = document.getElementById('end-color').value;
+      const fileDisplay = document.getElementById('file-display');
+      fileDisplay.innerHTML = '';
+ 
+      if (title) {
+        fileDisplay.innerHTML += `<h1 style="color: ${fontColor}; font-size: 24px; font-weight: bold;">${title}</h1>`;
+        document.title = title;
+      }
+ 
+      if (customMessage) {
+        fileDisplay.innerHTML += `<p>${customMessage}</p>`;
+      }
+ 
+      if (startColor && endColor) {
+        document.body.style.background = `linear-gradient(to bottom, ${startColor}, ${endColor})`;
+      }
+ 
+      const imageFile = document.getElementById('image-file').files[0];
+      const pdfFiles = document.getElementById('pdf-files').files;
+ 
+      if (imageFile) {
+        const imageReader = new FileReader();
+        imageReader.onload = function(event) {
+          fileDisplay.innerHTML += `<img src="${event.target.result}" alt="${imageFile.name}" style="max-width: 300px;">`;
+        };
+        imageReader.readAsDataURL(imageFile);
+      }
+ 
+      if (pdfFiles.length > 0) {
+        for (let i = 0; i < pdfFiles.length; i++) {
+          const pdfReader = new FileReader();
+          pdfReader.onload = function(event) {
+            fileDisplay.innerHTML += `<embed src="${event.target.result}" type="application/pdf" style="width: 100%; height: 90vh; margin-bottom: 15px;" />`;
+          };
+          pdfReader.readAsDataURL(pdfFiles[i]);
+        }
+      }
+    }
+  </script>
+ 
+</body>
+</html>
